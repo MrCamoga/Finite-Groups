@@ -2,13 +2,36 @@ from math import gcd, factorial
 from sympy import isprime
 import time
 
+"""
+    TODO
+    Metacylic groups
+    schnorr groups                          ✓
+    order permutations better               ✓
+    get generators of group
+    compute automorphism                    ✓
+    Aut(G)
+    outer automorphisms (Aut(G)/Inn(G))
+    stabilizer/ group orbits?
+    compute order in O(n) instead of O(n*logn)
+    is abelian in O(n)
+    semidirect product
+"""
 
+"""
+    Z/nZ
+"""
 def cyclic(n):
     return [[(i+j)%n for i in range(n)] for j in range(n)]
 
+"""
+    group of symettries of a n-gon
+"""
 def dihedral(n):
     return [[(k+g)%n + k//n*n if g < n else ((g+(n-1)*k)%n + (k//n+1)*n)%(2*n) for k in range(2*n)] for g in range(2*n)]
 
+"""
+    symmetric group of permutations of n letters
+"""
 def symmetric(n):
     if n == 1:
         return [[0]]
@@ -31,14 +54,23 @@ def symmetric(n):
         blockwidth = rowwidth
     return G
 
+"""
+    multiplicative group modulo n
+"""
 def mult(n):
     H = [k for k in range(1,n) if gcd(k,n)==1]
     return __multGroup(H,n)
 
+"""
+    
+"""
 def __multGroup(H_, n):
     H = {H_[i]:i for i in range(len(H_))}
     return [[H[(H_[i]*H_[j])%n] for i in range(len(H_))] for j in range(len(H_))]
 
+"""
+    https://math.dartmouth.edu/~carlp/PDF/paper55.pdf
+"""
 def falseWitness(n):
     H = [k for k in range(1,n) if modpow(k,n-1,n) == 1]
     return __multGroup(H,n)
@@ -62,9 +94,15 @@ def schnorr(p,q):
     
     return __multGroup(H,p)
 
+"""
+    direct product of A and B
+"""
 def direct(A, B):
     return [[(A[b%len(A)][a%len(A)]+B[b//len(A)][a//len(A)]*len(A))%(len(A)*len(B)) for a in range(len(A)*len(B))] for b in range(len(A)*len(B))]
 
+"""
+    returns the orders of all elements of G
+"""
 def orders(G, returndict:bool = False):
     o = {0:1}
 
@@ -92,6 +130,9 @@ def orders(G, returndict:bool = False):
 
     return [o[i] for i in range(len(G))]
 
+"""
+    return orders of all elements of the subset H of G
+"""
 def ordersSub(G, H):
     o = list()
     for g in range(len(H)):
@@ -103,7 +144,9 @@ def ordersSub(G, H):
         o.append(order)
     return o    
 
-# return generators of G
+"""
+    returns a set of generators of G
+"""
 def generators(G):
     o = orders(G)
     e = G[0][:]
@@ -149,6 +192,10 @@ def isCyclic(G):
 def isNormal(G,N):
     return "A programar listillo"
 
+"""
+    returns the center of G
+    Z(G) = {g∈G | ∀k ∈ G  k*g = g*k}
+"""
 def center(G):
     Z = list()
     for i in range(len(G)):
@@ -183,6 +230,9 @@ def normalizer(G, S):
             N.append(g)
     return N
 
+"""
+    gH = {gh : h∈H}
+"""
 def leftcoset(G, H, g):
     coset = set()
 
@@ -191,6 +241,9 @@ def leftcoset(G, H, g):
 
     return coset
 
+"""
+    Hg = {hg : h∈H}
+"""
 def rightcoset(G, H, g):
     coset = set()
 
@@ -199,6 +252,10 @@ def rightcoset(G, H, g):
 
     return coset
 
+"""
+    If H is a normal subgroup of G, then gH = Hg ∀g ∈ G
+    and we can define the quotient group G/H = {gH : g∈G}
+"""
 def quotient(G, H):
     Q = list()
     m = set()
@@ -220,9 +277,15 @@ def quotient(G, H):
 
     return Q
 
+"""
+    semidirect product of G and H
+"""
 def semidirect(G,H,automorphism):
     return "Illo programame"
 
+"""
+    returns an automorphism given the images of the generators
+"""
 def automorphism(G, genimg: dict):
     bijection = [0 for i in range(len(G))]
 
@@ -258,18 +321,25 @@ def automorphism(G, genimg: dict):
     return bijection
         
         
-    
+"""
+    group of automorphisms of G
+"""
 def Aut(G, gens: set):
     o = ordersDict(G)
     
-
-    
-    
     return G
 
+"""
+    group of inner automorphisms of G
+    Inn(G) = G/Z(G)
+"""
 def Inn(G):
     return quotient(G, center(G))
 
+"""
+    outter automorphisms of G
+    Out(G) = Aut(G)/Inn(G)
+"""
 def Out(G):
     return quotient(Aut(G),Inn(G))
 
@@ -280,6 +350,9 @@ def toString(G):
 Utils
 """
 
+"""
+    returns (a^b)%n
+"""
 def modpow(a, b, n):
     r = 1
     while b > 0:
