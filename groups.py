@@ -5,16 +5,16 @@ import time
 """
     TODO
     Metacylic groups
-    schnorr groups                          ✓
-    order permutations better               ✓
+    schnorr groups                              ✓
+    order permutations better                   ✓
     get generators of group
-    compute automorphism                    ✓
+    compute automorphism with generators        ✓
     Aut(G)
     outer automorphisms (Aut(G)/Inn(G))
     stabilizer/ group orbits?
     compute order in O(n) instead of O(n*logn)
-    is abelian in O(n)
-    semidirect product
+    is isomorphic / is normal / is abelian
+    semidirect product                          ✓
 """
 
 """
@@ -30,7 +30,7 @@ def dihedral(n):
     return [[(k+g)%n + k//n*n if g < n else ((g+(n-1)*k)%n + (k//n+1)*n)%(2*n) for k in range(2*n)] for g in range(2*n)]
 
 """
-    symmetric group of permutations of n letters
+    symmetric group of permutations on n letters
 """
 def symmetric(n):
     if n == 1:
@@ -168,7 +168,7 @@ def generators(G):
             product = G[gen][product]
         gens.append(gen)
     return gens
-
+    
 def isAbelian(G):
     for i in range(1,len(G)):
         for j in range(i+1,len(G)):
@@ -190,7 +190,10 @@ def isCyclic(G):
     return False
 
 def isNormal(G,N):
-    return "A programar listillo"
+    return 
+
+def isIsomorphic(G,H):
+    return
 
 """
     returns the center of G
@@ -209,48 +212,22 @@ def center(G):
     return Z
 
 def centralizer(G, S):
-    C = list()
-
-    for g in range(len(G)):
-        c = True
-        for s in range(len(S)):
-            if G[g][S[s]] != G[S[s]][g]:
-                c = False
-                break
-        if c:
-            C.append(g)
-
-    return C
+    return [g for g in range(len(G)) if all([G[g][S[s]] == G[S[s]][g] for s in range(len(S))])]
     
 def normalizer(G, S):
-    N = list()
-
-    for g in range(len(G)):
-        if leftcoset(G, S, g) == rightcoset(G, S, g):
-            N.append(g)
-    return N
+    return [g for g in range(len(G)) if leftcoset(G,S,g) == rightcoset(G,S,g)]
 
 """
     gH = {gh : h∈H}
 """
 def leftcoset(G, H, g):
-    coset = set()
-
-    for h in range(len(H)):
-        coset.add(G[g][H[h]])
-
-    return coset
+    return {G[g][H[h]] for h in range(len(H))}
 
 """
     Hg = {hg : h∈H}
 """
 def rightcoset(G, H, g):
-    coset = set()
-
-    for h in range(len(H)):
-        coset.add(G[H[h]][g])
-
-    return coset
+    return {G[H[h]][g] for h in range(len(H))}
 
 """
     If H is a normal subgroup of G, then gH = Hg ∀g ∈ G
@@ -279,9 +256,17 @@ def quotient(G, H):
 
 """
     semidirect product of G and H
+    G, H: groups
+    f: H -> Aut(G)
 """
-def semidirect(G,H,automorphism):
-    return "Illo programame"
+def semidirect(G,H,f):
+    GH = [[0 for h in range(len(H)*len(G))] for g in range(len(G)*len(H))]
+    for y in range(len(H)):
+        for x in range(len(H)):
+            for g in range(len(G)):
+                for k in range(len(G)):
+                    GH[g+y*len(G)][k+x*len(G)] = (G[g][f[y][k]]+H[y][x]*len(G))%len(GH)
+    return GH
 
 """
     returns an automorphism given the images of the generators

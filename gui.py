@@ -10,16 +10,16 @@ master = Tk()
 WIDTH = 720
 HEIGHT = 720
 
-G = dihedral(5000)
+C4 = cyclic(4)
+C3 = cyclic(3)
+C5 = cyclic(5)
 
-t0 = time.time_ns()
-A = ordersDepr(G)
-t1 = time.time_ns()
-B = orders(G)
-t2 = time.time_ns()
+AutC5 = [automorphism(C5, {1:i}) for i in range(1,5)]
 
-print("O(n^2):",(t1-t0)/1e9,"s")
-print("O(nlog(n)):",(t2-t1)/1e9,"s")
+##G = semidirect(C5, C4, [AutC5[0],AutC5[1],AutC5[3],AutC5[2]])
+##G = semidirect(C5, C4, [AutC5[0],AutC5[2],AutC5[3],AutC5[1]]) 
+##G = semidirect(C5, C4, [AutC5[0],AutC5[3],AutC5[0],AutC5[3]])
+
 
 canvas = Canvas(master, width=WIDTH, height=HEIGHT)
 
@@ -62,13 +62,8 @@ def drawCayleyGraph():
     
 ##G = groups.falseWitness(17407) 17425
 
-##drawCayleyTable()
+drawCayleyTable()
 ##drawCayleyGraph()
 
-
-
-
-
-
-def write():
-    img.write("FW17407.png", format="png")
+def write(name):
+    img.write(name + ".png", format="png")
