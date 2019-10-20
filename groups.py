@@ -24,7 +24,7 @@ def cyclic(n):
     return [[(i+j)%n for i in range(n)] for j in range(n)]
 
 """
-    group of symettries of a n-gon
+    group of symmetries of a n-gon
 """
 def dihedral(n):
     return [[(k+g)%n + k//n*n if g < n else ((g+(n-1)*k)%n + (k//n+1)*n)%(2*n) for k in range(2*n)] for g in range(2*n)]
@@ -260,13 +260,7 @@ def quotient(G, H):
     f: H -> Aut(G)
 """
 def semidirect(G,H,f):
-    GH = [[0 for h in range(len(H)*len(G))] for g in range(len(G)*len(H))]
-    for y in range(len(H)):
-        for x in range(len(H)):
-            for g in range(len(G)):
-                for k in range(len(G)):
-                    GH[g+y*len(G)][k+x*len(G)] = (G[g][f[y][k]]+H[y][x]*len(G))%len(GH)
-    return GH
+    return [[(G[b%len(G)][f[b//len(G)][a%len(G)]] + H[b//len(G)][a//len(G)]*len(G))%(len(G)*len(H)) for a in range(len(G)*len(H))] for b in range(len(G)*len(H))] 
 
 """
     returns an automorphism given the images of the generators
